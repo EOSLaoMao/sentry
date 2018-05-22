@@ -11,7 +11,7 @@ EOS BP monitor
     ```
 
 
-2. change HOST in `monitor.py` to the host you can access.
+2. change HOST and BP name you want to monitor in `monitor.py`.
 
 
 3. run cron job.
