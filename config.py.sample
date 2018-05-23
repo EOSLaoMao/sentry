@@ -1,2 +1,6 @@
-HOST = 'http://bp-2.ono.chat:8877'
-TELEGRAM_TOKEN = ''
+import os
+
+HOST = os.getenv('HTTP_HOST')
+TELEGRAM_TOKEN =  os.getenv('TELEGRAM_TOKEN')
+BP_NAME = os.getenv('BP_NAME')
+

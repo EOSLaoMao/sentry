@@ -1,0 +1,13 @@
+version: '3'
+services:
+  cronjob:
+    build:
+      context: .
+    image: sentry_cronjob:latest
+    environment: 
+      - BP_NAME=eoslaomao
+      - TELEGRAM_TOKEN= 
+      - HTTP_HOST=http://bp-2.ono.chat:8877
+    command: python cron.py 
+     
+    
