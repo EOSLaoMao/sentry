@@ -6,5 +6,5 @@ BP_NAME = os.getenv('BP_NAME')
 ENABLE_TWILIO = os.getenv('ENABLE_TWILIO')
 TWILIO_ACCOUNT_SID = os.getenv('TWILIO_ACCOUNT_SID')
 TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN')
-PHONES = os.getenv('PHONES')
-PHONE_FROM = os.getenv('PHONE_FROM')
+PHONES = []
+PHONE_FROM = ''
