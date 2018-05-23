@@ -6,11 +6,13 @@ import requests
 import json
 import os
 import time
+import datetime
 
 from config import HOST, BP_NAME
 from telegram import send_message
 
 PATH = 'v1/chain/get_table_rows'
+count = 0
 
 def get_producers():
     data = {
@@ -41,7 +43,11 @@ def monitor_producer():
             send_message(msg)
             print msg
         else:
-            msg = 'BP in good condition :)'
-            send_message(msg)
-            print msg
+            if count%120 == 0:
+                current_time = str(datetime.datetime.now())
+                msg = 'BP in good condition :) @ %s'%current_time
+                send_message(msg)
+                print msg
+                count=0
+            count+=1
         print now, last_converted, now - last_converted
