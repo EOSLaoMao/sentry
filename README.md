@@ -11,7 +11,7 @@ EOS BP monitor
     ```
 
 
-2. change HOST and BP name you want to monitor in `monitor.py`.
+2. copy `config.py.sample` to `config.py` and configure `HOST` `BP_NAME` and `TELEGRAM_TOKEN` of your bot.
 
 
 3. run cron job.
@@ -19,5 +19,3 @@ EOS BP monitor
     ```
     python cron.py
     ```
-
-

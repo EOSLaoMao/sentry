@@ -7,7 +7,9 @@ import json
 import os
 import time
 
-HOST = 'http://bp-2.ono.chat:8877'
+from config import HOST, BP_NAME
+from telegram import send_message
+
 PATH = 'v1/chain/get_table_rows'
 
 def get_producers():
@@ -21,19 +23,25 @@ def get_producers():
     prods = res.json()['rows']
     return prods
 
-def monitor_producer(name='eoslaomao'):
+def monitor_producer():
     prods = get_producers()
     print 'There are %d BPs' % len(prods)
-    bps = [bp for bp in prods if bp['owner'] == name]
+    bps = [bp for bp in prods if bp['owner'] == BP_NAME]
     if len(bps) == 0:
-        print 'bp with name %s NOT FOUND!!!' % name
+        msg = 'bp with name %s NOT FOUND!!!' % BP_NAME
+        send_message(msg)
+        print msg
     else:
         last = int(bps[0]['last_produced_block_time'])
         now = int(time.time())
         # magic number, 946684800 is 2000.1.1 12:00 AM
         last_converted = last/2. + 946684800
         if now - last_converted > 6 * min(21, len(prods)):
-            print 'BP DOWN!!!!!'
+            msg = 'BP DOWN!!!!!'
+            send_message(msg)
+            print msg
         else:
-            print 'BP is normal'
+            msg = 'BP in good condition :)'
+            send_message(msg)
+            print msg
         print now, last_converted, now - last_converted

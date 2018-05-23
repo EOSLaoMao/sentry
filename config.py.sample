@@ -1,0 +1,2 @@
+HOST = 'http://bp-2.ono.chat:8877'
+TELEGRAM_TOKEN = ''
