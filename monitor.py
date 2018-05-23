@@ -26,6 +26,7 @@ def get_producers():
     return prods
 
 def monitor_producer():
+    global count
     prods = get_producers()
     print 'There are %d BPs' % len(prods)
     bps = [bp for bp in prods if bp['owner'] == BP_NAME]
