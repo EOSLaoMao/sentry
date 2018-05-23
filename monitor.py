@@ -8,11 +8,19 @@ import os
 import time
 import datetime
 
-from config import HOST, BP_NAME
+from config import HOST, BP_NAME, ENABLE_TWILIO
 from telegram import send_message
 
 PATH = 'v1/chain/get_table_rows'
 count = 0
+
+
+def notify(msg):
+    send_message(msg)
+    if ENABLE_TWILIO:
+        from phone import call
+        call()
+
 
 def get_producers():
     data = {
@@ -32,7 +40,7 @@ def monitor_producer():
     bps = [bp for bp in prods if bp['owner'] == BP_NAME]
     if len(bps) == 0:
         msg = 'bp with name %s NOT FOUND!!!' % BP_NAME
-        send_message(msg)
+        notify(msg)
         print msg
     else:
         last = int(bps[0]['last_produced_block_time'])
