@@ -1,0 +1,15 @@
+version: '3'
+services:
+  cronjob:
+    build:
+      context: .
+    image: sentry_cronjob:latest
+    environment: 
+      - BP_NAME=
+      - TELEGRAM_TOKEN=
+      - HTTP_HOST=
+      - TWILIO_ACCOUNT_SID=
+      - TWILIO_AUTH_TOKEN=
+    command: python cron.py 
+     
+    
