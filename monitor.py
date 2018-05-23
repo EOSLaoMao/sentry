@@ -6,6 +6,7 @@ import requests
 import json
 import os
 import time
+import datetime
 
 from config import HOST, BP_NAME
 from telegram import send_message
@@ -43,9 +44,10 @@ def monitor_producer():
             print msg
         else:
             if count%120 == 0:
-               msg = 'BP in good condition :)'
-               send_message(msg)
-               print msg
-               count=0
+                current_time = str(datetime.datetime.now())
+                msg = 'BP in good condition :) @ %s'%current_time
+                send_message(msg)
+                print msg
+                count=0
             count+=1
         print now, last_converted, now - last_converted
