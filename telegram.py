@@ -15,9 +15,10 @@ def get_chats():
 
 def send_message(message):
     chats = get_chats()
-    print(chats)
+    # print(chats)
     try:
         url = "https://api.telegram.org/bot%s/sendMessage" % TELEGRAM_TOKEN
+        print url
         for chat in chats:
             param = {"chat_id": chat, "text": message}
             result = requests.post(url, param, timeout=5.0)
