@@ -15,12 +15,11 @@ def get_chats():
 
 def send_message(message):
     chats = get_chats()
-    print(chats)
     try:
         url = "https://api.telegram.org/bot%s/sendMessage" % TELEGRAM_TOKEN
         for chat in chats:
             param = {"chat_id": chat, "text": message}
             result = requests.post(url, param, timeout=5.0)
-            print("telegram_alarm send result:%s" % result.text)
+#            print("telegram_alarm send result:%s" % result.text)
     except Exception as e:
         print("Get exception:%s" % str(e))

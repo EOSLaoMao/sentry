@@ -2,61 +2,51 @@
 curl  http://127.0.0.1:8888/v1/chain/get_table_rows -X POST -d '{"scope":"eosio", "code":"eosio", "table":"producers", "json": true}'
 '''
 
-import requests
-import json
-import os
-import time
 import datetime
 
-from config import HOST, BP_NAME, ENABLE_TWILIO
 from telegram import send_message
+from config import BP_NAME
+from phone import call
 
-PATH = 'v1/chain/get_table_rows'
-count = 0
+
+def get_current_time():
+    current_time = str(datetime.datetime.now())
+    return current_time
 
 
-def notify(msg):
-    send_message(msg)
-    if ENABLE_TWILIO:
-        from phone import call
+def monitor_producer(bp):
+    check_is_top21(bp)
+    check_is_new_top21(bp)
+
+    if bp.is_top21 is True:
+        check_is_producing(bp)
+
+
+def check_is_top21(bp):
+    bp.check_is_top21()
+    if bp.is_top21 is False:
+        msg = 'bp with name %s NOT FOUND!!! @ %s' % (
+            BP_NAME, get_current_time())
+        print("in check_is_top21 ", get_current_time())
+        send_message(msg)
+
+
+def check_is_new_top21(bp):
+    if bp.is_new_top21 is True:
+        msg = 'Congratulations! %s become the new top 21 ! @ %s' % (
+            BP_NAME, get_current_time())
+        print('in is_new_top21 function', get_current_time())
+        send_message(msg)
         call()
 
 
-def get_producers():
-    data = {
-        "scope": "eosio",
-        "code":"eosio",
-        "table":"producers",
-        "json": True
-    }
-    res = requests.post(os.path.join(HOST, PATH), data=json.dumps(data))
-    prods = res.json()['rows']
-    return prods
-
-def monitor_producer():
-    global count
-    prods = get_producers()
-    print 'There are %d BPs' % len(prods)
-    bps = [bp for bp in prods if bp['owner'] == BP_NAME]
-    if len(bps) == 0:
-        msg = 'bp with name %s NOT FOUND!!!' % BP_NAME
-        notify(msg)
-        print msg
+def check_is_producing(bp):
+    if bp.check_is_producing():
+        msg = '%s in good condition :) @%s' % (BP_NAME, get_current_time())
+        print('produing....', get_current_time())
+        send_message(msg)
     else:
-        last = int(bps[0]['last_produced_block_time'])
-        now = int(time.time())
-        # magic number, 946684800 is 2000.1.1 12:00 AM
-        last_converted = last/2. + 946684800
-        if now - last_converted > 6 * min(21, len(prods)):
-            msg = 'BP DOWN!!!!!'
-            send_message(msg)
-            print msg
-        else:
-            if count%120 == 0:
-                current_time = str(datetime.datetime.now())
-                msg = 'BP in good condition :) @ %s'%current_time
-                send_message(msg)
-                print msg
-                count=0
-            count+=1
-        print now, last_converted, now - last_converted
+        msg = '%s DOWN :( @%s' % (BP_NAME, get_current_time())
+        print('down...', get_current_time())
+        send_message(msg)
+        call()
