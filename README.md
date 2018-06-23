@@ -4,18 +4,11 @@ EOS BP monitor
 ### USAGE
 
 
-1. install requirements:
+1. Based on docker and docker-compose 
 
-    ```
-    pip install -r requrements.txt
-    ```
+2. Modify docker-compose.yml
+   1. HTTP_HOST: The network api endpoint
+   2. TELEGRAM_TOKEN: Your telegram token
+   3. BP_NAME: the bp you want to mointor
 
-
-2. copy `config.py.sample` to `config.py` and configure `HOST` `BP_NAME` and `TELEGRAM_TOKEN` of your bot.
-
-
-3. run cron job.
-
-    ```
-    python cron.py
-    ```
+3. Run ```docker-compose up -d ```

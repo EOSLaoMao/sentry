@@ -1,2 +1,10 @@
-HOST = 'http://bp-2.ono.chat:8877'
-TELEGRAM_TOKEN = ''
+import os
+
+HOST = os.getenv('HTTP_HOST')
+TELEGRAM_TOKEN =  os.getenv('TELEGRAM_TOKEN')
+BP_NAME = os.getenv('BP_NAME')
+ENABLE_TWILIO = os.getenv('ENABLE_TWILIO')
+TWILIO_ACCOUNT_SID = os.getenv('TWILIO_ACCOUNT_SID')
+TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN')
+PHONES = []
+PHONE_FROM = ''
