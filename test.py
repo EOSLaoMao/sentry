@@ -1,11 +1,10 @@
 import unittest
 import responses
 import requests
-
-
 from bp import BP
+from monitor import BPMonitor
 from config import HOST
-from data import fake_json, fake_json_1, fake_info, fake_info_1
+from data import fake_json, fake_json_1, fake_info, fake_info_1, fake_table_data,fake_table_data_1
 import time
 
 
@@ -16,9 +15,12 @@ class TestBPMonitor(unittest.TestCase):
         print("###################test in top 21 #####################")
         responses.add(responses.POST, HOST + '/v1/chain/get_producers',
                       json=fake_json, status=200)
+        responses.add(responses.POST, HOST + '/v1/chain/get_table_rows',
+                      json=fake_table_data, status=200)
 
-        bp = BP("eoslaomaocom", True, 1000)
-        bp.check_is_top21()
+        bp = BP("eoslaomaocom", True)
+        bp_monitor = BPMonitor(bp)
+        bp_monitor.check_is_top21()
         self.assertTrue(bp.is_top21)
         self.assertFalse(bp.is_new_top21)
         print("###################test in top 21 ##################### \n")
@@ -29,8 +31,11 @@ class TestBPMonitor(unittest.TestCase):
         print("###################test not in top 21 #####################")
         responses.add(responses.POST, HOST + '/v1/chain/get_producers',
                       json=fake_json, status=200)
-        bp = BP("eoslemonscom", False, 1000)
-        bp.check_is_top21()
+        responses.add(responses.POST, HOST + '/v1/chain/get_table_rows',
+                      json=fake_table_data, status=200)
+        bp = BP("eoslemonscom", False)
+        bp_monitor = BPMonitor(bp)
+        bp_monitor.check_is_top21()
         self.assertFalse(bp.is_top21)
         self.assertFalse(bp.is_new_top21)
         print("###################test not in top 21 #####################\n")
@@ -41,16 +46,21 @@ class TestBPMonitor(unittest.TestCase):
         print("##########################test from bpc -> bp #####################")
         responses.add(responses.POST, HOST + '/v1/chain/get_producers',
                       json=fake_json, status=200)
-        bp = BP("eoslemonscom", False, 1000)
-        bp.check_is_top21()
+        responses.add(responses.POST, HOST + '/v1/chain/get_table_rows',
+                      json=fake_table_data, status=200)
+        bp = BP("eoslemonscom", False)
+        bp_monitor = BPMonitor(bp)
+        bp_monitor.check_is_top21()
         self.assertFalse(bp.is_top21)
         self.assertFalse(bp.is_new_top21)
         responses.remove(responses.POST, HOST + '/v1/chain/get_producers')
 
         responses.add(responses.POST, HOST + '/v1/chain/get_producers',
                       json=fake_json_1, status=200)
+        responses.add(responses.POST, HOST + '/v1/chain/get_table_rows',
+                      json=fake_table_data, status=200)
         # become the bp
-        bp.check_is_top21()
+        bp_monitor.check_is_top21()
         self.assertTrue(bp.is_top21)
         self.assertTrue(bp.is_new_top21)
         print("##########################test from bpc -> bp #####################\n")
@@ -61,18 +71,21 @@ class TestBPMonitor(unittest.TestCase):
         print("##################test from bp -> bpc####################")
         responses.add(responses.POST, HOST + '/v1/chain/get_producers',
                       json=fake_json_1, status=200)
-        bp = BP("eoslemonscom", True, 1000)
-        bp.check_is_top21()
-        print(bp.is_top21)
-        print(bp.is_new_top21)
+        responses.add(responses.POST, HOST + '/v1/chain/get_table_rows',
+                      json=fake_table_data, status=200)
+        bp = BP("eoslemonscom", True)
+        bp_monitor = BPMonitor(bp)
+        bp_monitor.check_is_top21()
         self.assertTrue(bp.is_top21)
         self.assertFalse(bp.is_new_top21)
         responses.remove(responses.POST, HOST + '/v1/chain/get_producers')
 
         responses.add(responses.POST, HOST + '/v1/chain/get_producers',
                       json=fake_json, status=200)
+        responses.add(responses.POST, HOST + '/v1/chain/get_table_rows',
+                      json=fake_table_data, status=200)
         # be the bpc
-        bp.check_is_top21()
+        bp_monitor.check_is_top21()
         self.assertFalse(bp.is_top21)
         self.assertFalse(bp.is_new_top21)
         print("##################test from bp -> bpc####################\n")
@@ -83,9 +96,12 @@ class TestBPMonitor(unittest.TestCase):
         print("##################test check is producing####################")
         responses.add(responses.GET, HOST + '/v1/chain/get_info',
                       json=fake_info, status=200)
+        responses.add(responses.POST, HOST + '/v1/chain/get_table_rows',
+                      json=fake_table_data, status=200)
+        bp = BP('eoslaomaocom', True)
+        bp_monitor = BPMonitor(bp)
 
-        bp = BP('eoslemonscom', True, 1001)
-        self.assertTrue(bp.check_is_producing())
+        self.assertTrue(bp_monitor.check_is_producing())
         self.assertTrue(bp.is_top21)
         print("##################test check is producing####################\n")
         print("\n")
@@ -95,18 +111,21 @@ class TestBPMonitor(unittest.TestCase):
         print("##################test check is not producing####################")
         responses.add(responses.GET, HOST + '/v1/chain/get_info',
                       json=fake_info_1, status=200)
+        responses.add(responses.POST, HOST + '/v1/chain/get_table_rows',
+                      json=fake_table_data_1, status=200)
+        bp = BP('eoslaomaocom', True)
+        bp_monitor = BPMonitor(bp)
+        bp_monitor.count = 63
 
-        bp = BP('eoslemonscom', True, 100)
-        self.assertFalse(bp.check_is_producing())
+        self.assertFalse(bp_monitor.check_is_producing())
         self.assertTrue(bp.is_top21)
         print("##################test check is not producing####################\n")
         print("\n")
-    
-
 
     def tearDown(self):
         responses.remove(responses.POST, HOST + '/v1/chain/get_producers')
         responses.remove(responses.GET, HOST + '/v1/chain/get_info')
+        responses.remove(responses.POST, HOST + '/v1/chain/get_table_rows')
 
 
 if __name__ == '__main__':
