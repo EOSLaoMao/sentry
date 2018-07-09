@@ -10,6 +10,6 @@ services:
       - HTTP_HOST=
       - TWILIO_ACCOUNT_SID=
       - TWILIO_AUTH_TOKEN=
-    command: python cron.py 
+    command: ./forever cron.py 
      
     
