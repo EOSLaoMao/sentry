@@ -10,6 +10,7 @@ services:
       - HTTP_HOST=
       - TWILIO_ACCOUNT_SID=
       - TWILIO_AUTH_TOKEN=
+      - GOOGLE_APPLICATION_CREDENTIALS=
     command: ./forever cron.py 
      
     

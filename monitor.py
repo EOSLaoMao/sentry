@@ -3,6 +3,7 @@ from telegram import send_message
 from config import BP_NAME
 from phone import call
 from api import get_producers, get_table
+from gce import LogResolver
 
 
 def get_current_time():
@@ -15,6 +16,8 @@ class BPMonitor:
         self.bp = bp
         self.producing_count = 0
         self.notify_count = 0
+        self.latency_count = 0
+        self.lr = LogResolver()
 
     def check_is_top21(self):
         prods = get_producers()
@@ -50,8 +53,36 @@ class BPMonitor:
                 return False
         return True
 
+    def check_latency(self):
+        self.latency_count += 1
+        if self.latency_count % 30 == 0:  # call every one minute
+            latency = self.lr.get_latency()
+            if latency != -1:
+                if 2000 < latency <= 4000:
+                    msg = "bp %s's latency %s ms is too high !!! @ %s" % (
+                        BP_NAME, latency, get_current_time())
+                    print(msg)
+                    send_message(msg)
+                    self.latency_count = 0
+                elif latency > 4000:
+                    msg = "bp %s is stucking now. The latency is %s ms !!! @ %s" % (
+                        BP_NAME, latency, get_current_time())
+                    print(msg)
+                    send_message(msg)
+                    self.latency_count = 0
+                    call()
+                elif 0 < latency <= 2000:
+                    msg = "bp %s has normal latency %s ms!!! @ %s" % (
+                        BP_NAME, latency, get_current_time())
+                    print(msg)
+                    send_message(msg)
+                    self.latency_count = 0
+                else:
+                    self.latency_count = 0
+
     def monitor(self):
         self.check_is_top21()
+        self.check_latency()
 
         if self.bp.is_top21 is False:
             msg = 'bp with name %s NOT FOUND!!! @ %s' % (
