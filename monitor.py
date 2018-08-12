@@ -97,15 +97,15 @@ class BPMonitor:
             call()
         if self.bp.is_top21 is True:
             self.notify_count += 1
-            if self.check_is_producing():
-                msg = '%s is in good condition :) @%s' % (
-                    BP_NAME, get_current_time())
-                print('produing....', get_current_time())
-                if self.notify_count % 60 == 0:  # notify every
-                    send_message(msg)
+            if self.notify_count % 64 == 0:
+                if self.check_is_producing():
+                    msg = '%s in good condition :) @%s' % (
+                        BP_NAME, get_current_time())
+                    print('produing....', get_current_time())
                     self.notify_count = 0
-            else:
-                msg = '%s DOWN :( @%s' % (BP_NAME, get_current_time())
-                print('down...', get_current_time())
-                send_message(msg)
-                call()
+                    send_message(msg)
+                else:
+                    msg = '%s DOWN :( @%s' % (BP_NAME, get_current_time())
+                    print('down...', get_current_time())
+                    send_message(msg)
+                    call()
