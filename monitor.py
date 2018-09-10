@@ -14,7 +14,6 @@ def get_current_time():
 class BPMonitor:
     def __init__(self, bp):
         self.bp = bp
-        self.producing_count = 0
         self.notify_count = 0
         self.latency_count = 0
         self.lr = LogResolver()
@@ -33,29 +32,25 @@ class BPMonitor:
             self.bp.is_top21 = True
 
     def check_is_producing(self):
-        self.producing_count += 1
         prods = get_table()
         bps = [bp for bp in prods if bp['owner'] == self.bp.name]
         current_unpaid_blocks = 0
         if len(bps) != 0:
             current_unpaid_blocks = bps[0]['unpaid_blocks']
-        if self.producing_count % 64 == 0:
+            print("in function check_is_producing:",
+                  current_unpaid_blocks - self.bp.unpaid_blocks)
             if current_unpaid_blocks - self.bp.unpaid_blocks >= 12:
                 self.bp.unpaid_blocks = current_unpaid_blocks
-                self.producing_count = 0
                 return True
             elif current_unpaid_blocks - self.bp.unpaid_blocks < 0:
                 self.bp.unpaid_blocks = current_unpaid_blocks
-                self.producing_count = 0
                 return True
             else:
-                self.producing_count = 0
                 return False
-        return True
 
     def check_latency(self):
         self.latency_count += 1
-        if self.latency_count % 30 == 0:  # call every one minute
+        if self.latency_count % 30 == 0:  # call every 4 mins
             latency = self.lr.get_latency()
             if latency != -1:
                 if 2000 < latency <= 4000:
@@ -97,7 +92,7 @@ class BPMonitor:
             call()
         if self.bp.is_top21 is True:
             self.notify_count += 1
-            if self.notify_count % 64 == 0:
+            if self.notify_count % 16 == 0: # call every 124 seconds
                 if self.check_is_producing():
                     msg = '%s in good condition :) @%s' % (
                         BP_NAME, get_current_time())

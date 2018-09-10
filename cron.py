@@ -15,7 +15,7 @@ print("is_top_21", is_top21)
 bp = BP(BP_NAME, is_top21)
 bp_monitor = BPMonitor(bp)
 
-schedule.every(2).seconds.do(bp_monitor.monitor)
+schedule.every(8).seconds.do(bp_monitor.monitor)
 
 while True:
     schedule.run_pending()
