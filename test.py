@@ -3,10 +3,11 @@ import responses
 import requests
 from bp import BP
 from monitor import BPMonitor
-from config import HOST
+from config import HOSTS
 from data import fake_json, fake_json_1, fake_info, fake_info_1, fake_table_data,fake_table_data_1
 import time
 
+HOST = HOSTS[0]
 
 class TestBPMonitor(unittest.TestCase):
 
@@ -107,7 +108,7 @@ class TestBPMonitor(unittest.TestCase):
         print("\n")
 
     @responses.activate
-    def test_check_is_not_producin(self):
+    def test_check_is_not_producing(self):
         print("##################test check is not producing####################")
         responses.add(responses.GET, HOST + '/v1/chain/get_info',
                       json=fake_info_1, status=200)

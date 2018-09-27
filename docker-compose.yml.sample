@@ -7,7 +7,7 @@ services:
     environment: 
       - BP_NAME=
       - TELEGRAM_TOKEN=
-      - HTTP_HOST=
+      - API_HOSTS=
       - TWILIO_ACCOUNT_SID=
       - TWILIO_AUTH_TOKEN=
       - GOOGLE_APPLICATION_CREDENTIALS=

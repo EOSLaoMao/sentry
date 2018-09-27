@@ -1,7 +1,15 @@
 import json
 import os
 import requests
-from config import HOST
+from config import HOSTS
+
+def multi_request(func, endpoint, **kwargs):
+    for host in HOSTS:
+        try:
+            return func(os.path.join(host, endpoint), **kwargs)
+        except Exception as e:
+            print('multi_request', host, e)
+    raise Exception('run out of host list')
 
 
 def get_table():
@@ -16,8 +24,7 @@ def get_table():
             "lower_bound": "",
             "upper_bound": "",
             "limit": 1000}
-        res = requests.post(os.path.join(HOST, endpoint),
-                            data=json.dumps(data))
+        res = multi_request(requests.post, endpoint, data=json.dumps(data))
         prods = res.json()['rows']
         return prods
     except Exception as e:
@@ -27,7 +34,7 @@ def get_table():
 def get_info():
     try:
         endpoint = 'v1/chain/get_info'
-        res = requests.get(os.path.join(HOST, endpoint))
+        res = multi_request(requests.get, endpoint)
         return res.json()
     except Exception as e:
         print("get_info", e)
@@ -41,8 +48,7 @@ def get_producers():
             "limit": 21,
             "json": True
         }
-        res = requests.post(os.path.join(HOST, endpoint),
-                            data=json.dumps(data))
+        res = multi_request(requests.post, endpoint, data=json.dumps(data))
         print(res)
         prods = res.json()['rows']
         return prods

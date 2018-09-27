@@ -1,6 +1,6 @@
 import os
 
-HOST = os.getenv('HTTP_HOST')
+HOSTS = os.getenv('API_HOSTS').split('|')
 TELEGRAM_TOKEN =  os.getenv('TELEGRAM_TOKEN')
 BP_NAME = os.getenv('BP_NAME')
 ENABLE_TWILIO = os.getenv('ENABLE_TWILIO')
